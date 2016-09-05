@@ -19,14 +19,10 @@ import oo2apl.platform.Platform;
 public final class HelloWorldAgentMain {
 	public static void main(String[] args){
 		// Create the platform. Returns an interface to the platform to register new factories and create new agents
-		AdminToPlatformInterface adminInterface = Platform.newPlatform(1, new DefaultMessenger());
-		
-		// Make the agent component factory and add it to the platform
-		HelloWorldAgentComponentFactory helloWorldFactory = new HelloWorldAgentComponentFactory();
-		adminInterface.addFactory(helloWorldFactory);
+		AdminToPlatformInterface adminInterface = Platform.newPlatform(1, new DefaultMessenger()); 
 		
 		// Create a new agent. The platform will return an interface to the agent so that we can send it triggers
-		ExternalProcessToAgentInterface agentInterface = adminInterface.newAgent(helloWorldFactory.getAgentType(), helloWorldFactory.produceContextArguments("Hi"), null);
+		ExternalProcessToAgentInterface agent = adminInterface.newAgent(HelloWorldAgent.makeBuilder("Hi"));
 		
 		// Our external process to interact with the agent
 		Scanner scanner = new Scanner(System.in);
@@ -36,7 +32,7 @@ public final class HelloWorldAgentMain {
 			input = scanner.next();
 			if(!input.equals("halt")){
 				// This is how you interact with an agent. You send external triggers through the ExternalProcessToAgentInterface
-				agentInterface.addExternalTrigger(new HelloWorldExternalTrigger(input));		
+				agent.addExternalTrigger(new HelloWorldExternalTrigger(input));		
 			}
 		}		
 		scanner.close();
